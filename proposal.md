@@ -14,7 +14,8 @@ Missed medical appointments cost the healthcare system a lot of money and affect
 
 ## Description of the Data
 
-We will be visualizing a dataset of approximately 300,000 missed patient appointments. Each appointment has 15 associated variables that describe the patient who made the appointment (patient_id, gender, age), the health status (health_status) of the patient (Hypertension, Diabetes, Alcohol intake, physical disabilities), information about the appointment itself (appointment_id, appointment_date), whether the patient showed up (status), and if a text message was sent to the patient about the appointment (sms_sent). Using this data we will also derive a new variable, which is the predicted probability that a patient will show up for their appointment (prob_show).
+We will be visualizing a dataset of the survey result of approximately 1470 employees. Each result(a employee) has 35 associated variables that describe their demographics (e.g. `age`, `gender`, `marital status`), their role within the company (e.g. `department`, `job title`, `job level`, `total working year`), their compensation and working status(e.g. `monthly income`, `provision of training (time)`, `frequency of business travel`, `level of work life balance`) and their attitude toward the company (e.g. `job satisfaction`, `environment satisfaction`, `relationship satisfaction`). There is quite a good mix of numerical and categorical variables. Having conduct a EDA in looking for key factors for attribution, we found that `monthly income`, `level of work level balance`, `frequency of business travel` and `environment satisfaction` seem to be the more prominent factors for attrition. We will used them as the KPIs for the dashboard app.
+
 
 ## Research Questions and Usage Scenarios
 
