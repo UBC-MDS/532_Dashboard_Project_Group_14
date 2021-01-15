@@ -36,10 +36,10 @@ This Code of Conduct applies both within project spaces and in public spaces whe
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the project team at:
 
-- Asma Al-Odaini (github id anodaini)
-- Justin Fu  (github id jufu)
-- Chuck Ho  (github id ChuckHo777)
-- Junting He (github id JuntingHe)
+- Chuck Ho  (github id ChuckHo777)
+- Hazel Jiang  (github id HazelJJJ)
+- Anita Li  (github id AnitaLi-0371)
+- Ivy Zhang  (github id ssyayayy)
 
 The project team will review and investigate all complaints, and will respond in a way that it deems appropriate to the circumstances. The project team is obligated to maintain confidentiality with regard to the reporter of an incident. Further details of specific enforcement policies may be posted separately.
 
