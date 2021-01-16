@@ -4,12 +4,11 @@
 
 ## Motivation and Purpose
 
-Our role: Data scientist consultancy firm
+Our role: Data Analyst in HR within IBM
 
-Target audience: Health care administrators
+Target audience: Employee Retention Management Committee
 
-Missed medical appointments cost the healthcare system a lot of money and affects the quality of care. If we could understand what factors lead to missed appointments it may be possible to reduce their frequency. To address this challenge, we propose building a data visualization app that allows health care administrators to visually explore a dataset of missed appointments to identify common factors. Our app will show the distribution of factors contributing to appointment show/no show and allow users to explore different aspects of this data by filtering and re-ordering on different variables in order to compare factors that contribute to absence.
-
+Companies usually spend a large amount of money on training new employees every year. Whenever there is a turnover, it is costly to go through the hiring and training process. Therefore, employee loyalty is one the important things that management team should draw attention to. It is very useful to uncover the factors contribute to employee attrition. To address this challenge, we propose building a data visualization app that offers the management team to visually explore the dataset of employee attrition to identify common factors. Our app will show whether the employee choose to attrite and allow users to filter different variables in order to better explore and compare the factors that lead to attrition.
 
 
 ## Description of the Data
@@ -23,7 +22,9 @@ Joel is a member of employee retention management committee in IBM and he wants 
 
 When Joel logs on to the "IBM Employee Attrition Analytics Dashboard", she will see a KPIs overview with 4 prominent factors for attrition. She can then filter out variables such a employee department, job role, gender and age to to identify the employee segment that are more likely affected by these 4 key factors. When he does so, Joel may notice that female employees in Sales team with low level of work level balance seems having a higher likelihood in resigning. He decided to conduct follow up in-depth interviews with employee from this segment to further investigate the reasons behind the low level of work life balance and come up with meaures to reduce the likelihood of retention since these in-depth reasons are not captured in the current dataset.
 
+Dashboard Sketch:
 
+![](app_sketch.png)
   
 ## License
 IBM Employee Attrition Analytics materials here are licensed under the Creative Commons Attribution 2.5 Canada License (CC BY 2.5 CA). If re-using/re-mixing please provide attribution and link to this webpage.
