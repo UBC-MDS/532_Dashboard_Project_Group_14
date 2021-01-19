@@ -1,4 +1,9 @@
+<!-- #region -->
 # 532_Dashboard_Project_Group_14
+
+## Link to the deployed dashboard
+
+
 
 ## Description of app & sketch
 
@@ -6,3 +11,4 @@ This app shows the 4 key factors that may contribute to employee attrition based
 
 App sketch
 ![](app_sketch.png)
+<!-- #endregion -->
