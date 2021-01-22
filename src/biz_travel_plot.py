@@ -12,6 +12,7 @@ attrition = pd.read_csv("../data/WA_Fn-UseC_-HR-Employee-Attrition.csv")
 
 # Setup app and layout/frontend
 app = dash.Dash(__name__,  external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'])
+server = app.server
 app.layout = html.Div([
     html.Iframe(
         id='bar_biz_travel',
@@ -33,7 +34,7 @@ app.layout = html.Div([
 def plot_altair(gen_value):
     chart = alt.Chart(attrition[attrition["Gender"]== gen_value]).mark_bar().encode(
         y=alt.Y("BusinessTravel", title="Frequency of Business Travel"),
-        x=alt.X('count()', stack="normalize"),
+        x=alt.X('count()', stack="normalize"),  # rwidth = xx or something to change the bar width
         color = "Attrition")
     return chart.to_html()
     #return chart
