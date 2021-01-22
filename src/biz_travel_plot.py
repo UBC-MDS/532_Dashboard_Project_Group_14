@@ -3,7 +3,6 @@ import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output
 import altair as alt
-from vega_datasets import data
 import pandas as pd
 
 
