@@ -1,1 +1,1 @@
-web: gunicorn src.biz_travel_plot:server
+web: gunicorn src.app:server
