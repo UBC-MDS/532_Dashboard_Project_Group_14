@@ -1,7 +1,7 @@
 <!-- #region -->
 # 532_Dashboard_Project_Group_14
 
-## Link to the deployed dashboard
+# Key Factors for Employee Attrition Dashboard
 
 
 ## Welcome!
@@ -32,3 +32,6 @@ This app shows the 4 key factors that may contribute to employee attrition based
 App sketch
 ![](app_sketch.png)
 <!-- #endregion -->
+
+## Dashboard App Deployment - Prototype
+[Key Factors for Employee Attrition](https://dsci532-grou14-appv1-1.herokuapp.com/)
