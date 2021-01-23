@@ -6,7 +6,7 @@ import altair as alt
 import pandas as pd
 import dash_bootstrap_components as dbc
 
-# submission for heroku22
+# submission for heroku - appv1.1
 
 df = pd.read_csv(r"data/Processed/HR_employee_Attrition_editted.csv")
 ###Convert variables to categoriccal and reordering by label.
