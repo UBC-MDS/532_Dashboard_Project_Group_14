@@ -1,6 +1,7 @@
 Reflection - Milestone2
 ================
 Cheuk Ho, Hazel Jiang, Anita Li, Ivy Zhang
+
 22/01/2021
 
 In this milestone, we implemented the plots for the 4 key factors (`Monthly Income`,
