@@ -6,10 +6,9 @@ import altair as alt
 import pandas as pd
 import dash_bootstrap_components as dbc
 
-# submission for heroku - appv1.1
-
+# Read Data - Don't Change the Path
 df = pd.read_csv(r"data/Processed/HR_employee_Attrition_editted.csv")
-###Convert variables to categoriccal and reordering by label.
+# Convert variables to categoriccal and reordering by label.
 df['EnvironmentSatisfaction'] = df['EnvironmentSatisfaction'].astype('category').cat.rename_categories(["1 - Bad", "2 - Good", "3 - Better", "4 - Best"])
 df['WorkLifeBalance']=df['WorkLifeBalance'].astype('category').cat.rename_categories(["1 - Low", "2 - Medium", "3 - High", "4 - Very High"])
 df["Department"]=df["Department"].astype('category')
