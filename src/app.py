@@ -19,26 +19,77 @@ df['BusinessTravel'] = df['BusinessTravel'].cat.rename_categories(["1 - No Trave
 # Setup app and layout/frontend
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
+
+def plot_summaries(df=df):
+
+    chart_att_department = alt.Chart(
+        df, 
+        title='Attrition by Department').mark_bar(size=60, opacity= 0.8).encode(
+        x=alt.X('Department', title='', axis=alt.Axis(grid=False, labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
+        y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
+        color =alt.Color('Attrition', scale=alt.Scale(range=["#00BFC4", "#F8766D"])),
+        ).properties(height=200, width=250)
+
+    chart_att_gender = alt.Chart(
+        df, 
+        title='Attrition by Department').mark_bar(size=70, opacity= 0.8).encode(
+        x=alt.X('Gender', title='', axis=alt.Axis(grid=False,labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
+        y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
+        color = 'Attrition'
+        ).properties(height=200, width=250)
+
+    chart = (chart_att_department | chart_att_gender) 
+
+    return chart.to_html()
+
+
+
 app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
-            html.H1('Key Factors for Employee Attrition', 
+            html.H1('Key Factors for Employee Attrition Dashboard', 
             style={
                     'color' : 'b', 
                     'background-color' : '#f0f0f1', 
                     'textAlign': 'center',
                     'justify': "center",
                     'font-size': '48px',
+                    'font-family': 'Roboto'
                    }),
             html.Br(),
         ], style={'backgroundColor': '#f0f0f1',
                     'border-radius': 3,
-                    'padding': 15,
+                    'padding': 5,
                     #'margin-top': 20,
-                    'margin-bottom': 10,
+                    'margin-bottom': 15,
                     'margin-right': 15
         })                  
     ]),
+    dbc.Row([
+        dbc.Col([
+            dbc.CardHeader('Attrition Overview', 
+                    style={
+                    'textAlign': 'center',
+                    'justify': "center",
+                    'font-size': '24px',
+                    'font-family': 'Proxima Nova' #Roboto, Open Sans, 
+                   }),
+                dbc.CardBody(
+                    html.Iframe(
+                        id='summary_plots',
+                        srcDoc=plot_summaries(),
+                        style={'justify': "center",
+                                'border-width': '0', 
+                                'width': '200%', 
+                                'height': '300px'}
+                                ),style={
+                                    'textAlign': 'right',
+                                    'justify': "center",
+                                    'font-size': '24px',
+                                    'font-family': 'Roboto'}
+                            )
+        ])]),
+
     dbc.Row([
         dbc.Col([
             'Department',
@@ -76,8 +127,9 @@ app.layout = dbc.Container([
             html.Iframe(
                 id='scatter',
                 style={'border-width': '0', 'width': '200%', 'height': '1000px'}),
-                )])])  
+                )]),
 
+]) 
 # Set up callbacks/backend
 @app.callback(
     Output('scatter', 'srcDoc'),
@@ -91,23 +143,6 @@ def plot_altair(depart,gender, age=18):
 
     col_range = ["#00BFC4", "#F8766D"]
     # distribution on monthly income
-
-    chart_att_department = alt.Chart(
-        df, 
-        title='Attrition by Department').mark_bar(size=60, opacity= 0.8).encode(
-        x=alt.X('Department', title='', axis=alt.Axis(grid=False, labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
-        y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
-        color = 'Attrition'
-        ).properties(height=200, width=250)
-
-    chart_att_gender = alt.Chart(
-        df, 
-        title='Attrition by Department').mark_bar(size=70, opacity= 0.8).encode(
-        x=alt.X('Gender', title='', axis=alt.Axis(grid=False,labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
-        y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
-        color = 'Attrition'
-        ).properties(height=200, width=250)
-    
 
     chart_income = alt.Chart(data, title='Monthly Income Distribution').mark_boxplot(size = 50).encode(
         x=alt.X('MonthlyIncome:Q', scale=alt.Scale(zero=False), axis=alt.Axis(grid=False)),
@@ -138,7 +173,7 @@ def plot_altair(depart,gender, age=18):
         x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
         color='Attrition').properties(height=200, width=250)
     
-    chart = ((chart_att_department & chart_att_gender) | (chart_income&chart_travel) | (chart_worklife&chart_environment))
+    chart = ((chart_income&chart_travel) | (chart_worklife&chart_environment))
     return chart.to_html()
 
 
