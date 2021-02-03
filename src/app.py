@@ -20,24 +20,44 @@ df['BusinessTravel'] = df['BusinessTravel'].cat.rename_categories(["1 - No Trave
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 app.layout = dbc.Container([
-    html.H1('Key Factors for Employee Attrition'),
+    dbc.Row([
+        dbc.Col([
+            html.H1('Key Factors for Employee Attrition', 
+            style={
+                    'color' : 'b', 
+                    'background-color' : '#f0f0f1', 
+                    'textAlign': 'center',
+                    'justify': "center",
+                    'font-size': '48px',
+                   }),
+            html.Br(),
+        ], style={'backgroundColor': '#f0f0f1',
+                    'border-radius': 3,
+                    'padding': 15,
+                    #'margin-top': 20,
+                    'margin-bottom': 10,
+                    'margin-right': 15
+        })                  
+    ]),
     dbc.Row([
         dbc.Col([
             'Department',
             dcc.Dropdown(
                 id='depart-widget',
-                value='Sales',
+                value=['Sales', 'Human Resources', 'Research & Development'],
                 options=[
                     {'label': col, 'value': col} for col in list(set(df.Department.tolist()))],
+                multi=True,
                 placeholder='Select a department'),
             
             'Gender',
             dcc.Dropdown(
                 id='gender-widget',
-                value='Female',  # REQUIRED to show the plot on the first page load
+                value=['Female', 'Male'],  # REQUIRED to show the plot on the first page load
                 options=[
                     {'label': "Female", 'value': "Female"},
                     {'label': "Male", 'value': "Male"}],
+                multi=True,
                 placeholder='Select gender'
                 ),
 
@@ -55,7 +75,7 @@ app.layout = dbc.Container([
         dbc.Col(
             html.Iframe(
                 id='scatter',
-                style={'border-width': '0', 'width': '200%', 'height': '800px'}),
+                style={'border-width': '0', 'width': '200%', 'height': '1000px'}),
                 )])])  
 
 # Set up callbacks/backend
@@ -66,16 +86,30 @@ app.layout = dbc.Container([
     Input('age_slider', 'value'))
 
 def plot_altair(depart,gender, age=18):
-
-    #filter data by widgets
-    data = df[(df['Department']==depart) & (df['Gender']==gender)&(df['Age']>=age[0])&(df['Age']<=age[1])]
+    # filter data based on criteria
+    data = df[(df['Department'].isin(depart)) & (df['Gender'].isin(gender))&(df['Age']>=age[0])&(df['Age']<=age[1])]
 
     col_range = ["#00BFC4", "#F8766D"]
+    # distribution on monthly income
 
-    chart_income = alt.Chart(
-        data, 
-        title='Monthly Income Distribution'
-        ).mark_boxplot(size = 50, opacity= 0.8).encode(
+    chart_att_department = alt.Chart(
+        df, 
+        title='Attrition by Department').mark_bar(size=60, opacity= 0.8).encode(
+        x=alt.X('Department', title='', axis=alt.Axis(grid=False, labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
+        y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
+        color = 'Attrition'
+        ).properties(height=200, width=250)
+
+    chart_att_gender = alt.Chart(
+        df, 
+        title='Attrition by Department').mark_bar(size=70, opacity= 0.8).encode(
+        x=alt.X('Gender', title='', axis=alt.Axis(grid=False,labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
+        y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
+        color = 'Attrition'
+        ).properties(height=200, width=250)
+    
+
+    chart_income = alt.Chart(data, title='Monthly Income Distribution').mark_boxplot(size = 50).encode(
         x=alt.X('MonthlyIncome:Q', scale=alt.Scale(zero=False), axis=alt.Axis(grid=False)),
         y=alt.Y('Attrition',  axis=alt.Axis(grid=False)),
         color=alt.Color('Attrition', scale=alt.Scale(range=col_range)) 
@@ -85,26 +119,26 @@ def plot_altair(depart,gender, age=18):
     chart_worklife = alt.Chart(
         data, 
         title='Work Life Balance').mark_bar(opacity= 0.8).encode(
-        y=alt.Y('WorkLifeBalance:O', title=''), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
-        x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%'), title = 'Proportion'),
+        y=alt.Y('WorkLifeBalance:O', title='', axis=alt.Axis(grid=False)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
+        x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
         color = 'Attrition'
     ).properties(height=200, width=250)
     
     chart_travel = alt.Chart(
         data,
         title='Business Travel Frequency').mark_bar(opacity= 0.8).encode(
-        y=alt.Y("BusinessTravel", title=""),
-        x=alt.X('count()', stack="normalize", axis=alt.Axis(format='%'), title='Proportion'),
+        y=alt.Y("BusinessTravel", title="", axis=alt.Axis(grid=False)),
+        x=alt.X('count()', stack="normalize", axis=alt.Axis(format='%', grid=False), title='Proportion'),
         color = "Attrition").properties(height=200, width=250)
     
     chart_environment = alt.Chart(
         data, 
         title='Environment Satisfaction').mark_bar(opacity= 0.8).encode(
-        y=alt.Y('EnvironmentSatisfaction', title=''),
-        x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%'), title = 'Proportion'),
+        y=alt.Y('EnvironmentSatisfaction', title='', axis=alt.Axis(grid=False)),
+        x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
         color='Attrition').properties(height=200, width=250)
     
-    chart = (chart_income&chart_travel)|(chart_worklife&chart_environment)
+    chart = ((chart_att_department & chart_att_gender) | (chart_income&chart_travel) | (chart_worklife&chart_environment))
     return chart.to_html()
 
 
