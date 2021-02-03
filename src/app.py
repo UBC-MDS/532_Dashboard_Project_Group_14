@@ -25,18 +25,20 @@ app.layout = dbc.Container([
             'Department',
             dcc.Dropdown(
                 id='depart-widget',
-                value='Sales',
+                value=['Sales', 'Human Resources', 'Research & Development'],
                 options=[
                     {'label': col, 'value': col} for col in list(set(df.Department.tolist()))],
+                multi=True,
                 placeholder='Select a department'),
             
             'Gender',
             dcc.Dropdown(
                 id='gender-widget',
-                value='Female',  # REQUIRED to show the plot on the first page load
+                value=['Female', 'Male'],  # REQUIRED to show the plot on the first page load
                 options=[
                     {'label': "Female", 'value': "Female"},
                     {'label': "Male", 'value': "Male"}],
+                multi=True,
                 placeholder='Select gender'
                 ),
 
@@ -65,32 +67,30 @@ app.layout = dbc.Container([
     Input('age_slider', 'value'))
 
 def plot_altair(depart,gender, age=18):
-    chart_income = alt.Chart(
-        df[(df['Department']==depart) & (df['Gender']==gender)&(df['Age']>=age[0])&(df['Age']<=age[1])], 
-        title='Monthly Income Distribution'
-        ).mark_boxplot(size = 50).encode(
+    # filter data based on criteria
+    data = df[(df['Department'].isin(depart)) & (df['Gender'].isin(gender))&(df['Age']>=age[0])&(df['Age']<=age[1])]
+
+    # distribution on monthly income
+    chart_income = alt.Chart(data, title='Monthly Income Distribution').mark_boxplot(size = 50).encode(
         x=alt.X('MonthlyIncome:Q', scale=alt.Scale(zero=False), axis=alt.Axis(grid=False)),
         y=alt.Y('Attrition',  axis=alt.Axis(grid=False)),
         color='Attrition').properties(height=200, width=250)
     
-    chart_worklife = alt.Chart(
-        df[(df['Department']==depart) &(df['Gender']==gender)&(df['Age']>=age[0])&(df['Age']<=age[1])], 
-        title='Work Life Balance').mark_bar().encode(
+    # distribution on Work life balance
+    chart_worklife = alt.Chart(data, title='Work Life Balance').mark_bar().encode(
         y=alt.Y('WorkLifeBalance:O', title=''), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
         x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%'), title = 'Proportion'),
         color = 'Attrition'
     ).properties(height=200, width=250)
     
-    chart_travel = alt.Chart(
-        df[(df['Department']==depart) &(df['Gender']==gender)&(df['Age']>=age[0])&(df['Age']<=age[1])], 
-        title='Business Travel Frequency').mark_bar().encode(
+    # distribution on business travel frequency
+    chart_travel = alt.Chart(data, title='Business Travel Frequency').mark_bar().encode(
         y=alt.Y("BusinessTravel", title=""),
         x=alt.X('count()', stack="normalize", axis=alt.Axis(format='%'), title='Proportion'),
         color = "Attrition").properties(height=200, width=250)
     
-    chart_environment = alt.Chart(
-        df[(df['Department']==depart) & (df['Gender']==gender)&(df['Age']>=age[0])&(df['Age']<=age[1])], 
-        title='Environment Satisfaction').mark_bar().encode(
+    # distribution on environment satisfaction
+    chart_environment = alt.Chart(data, title='Environment Satisfaction').mark_bar().encode(
         y=alt.Y('EnvironmentSatisfaction', title=''),
         x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%'), title = 'Proportion'),
         color='Attrition').properties(height=200, width=250)
