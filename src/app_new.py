@@ -22,6 +22,10 @@ no_att_count = df["Attrition"].value_counts()[0]
 yes_att_count = df["Attrition"].value_counts()[1]
 total_count = df["Attrition"].count()
 
+# Attrition propertion by gender
+# df_f = df[df['Gender']=='Female']
+# female_attrition_rate = count(df_f['Attrition']=='Yes')/df_f.shape[0]
+
 # Setup app and layout/frontend
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
@@ -69,6 +73,7 @@ def plot_summaries(df=df):
         x=alt.X('Gender', title='', axis=alt.Axis(grid=False,labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
         y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
         color = alt.Color('Attrition', scale=alt.Scale(range=["#00BFC4", "#F8766D"])),
+        # tooltip='female_attrition_rate'
         ).properties(height=200, width=250)
 
     chart = (chart_att_department | chart_att_gender) 
@@ -115,9 +120,52 @@ cards = [
 
 
 app.layout = dbc.Container([
+     dbc.Row([
+        dbc.Col([
+            html.H1('Employee Attrition Dashboard', 
+            style={
+                    'color' : 'b', 
+                    'background-color' : '#f0f0f1', 
+                    'textAlign': 'center',
+                    'justify': "center",
+                    'font-size': '48px',
+                    'font-family': 'Roboto'
+                   }),
+            html.Br(),
+        ], style={'backgroundColor': '#f0f0f1',
+                    'border-radius': 3,
+                    'padding': 5,
+                    'margin-top': 20,
+                    'margin-bottom': 15,
+                    'margin-right': 15
+        })                  
+    ]),
+
+    dbc.Row(
+        [dbc.Col(
+            [
+                dbc.Row(
+                    dbc.Col(
+                        dbc.CardHeader('Attrition Overview', 
+                            style={
+                                'textAlign': 'center',
+                                'justify': "center",
+                                'font-size': '20px',
+                                'font-family': 'Proxima Nova' #Roboto, Open Sans, 
+                            }),
+                        width={"size": 5, "offset": 4},
+                    )
+                ),
+
+                dbc.Row([dbc.Col(card) for card in cards]),                        
+            ],
+            style=CONTENT_STYLE,
+            )
+        ]),
+
     dbc.Row([
         dbc.Col([
-            html.H1('Key Factors for Employee Attrition Dashboard', 
+            html.H2('Key Factors for Employee Attrition Dashboard', 
             style={
                     'color' : 'b', 
                     'background-color' : '#f0f0f1', 
@@ -200,44 +248,7 @@ app.layout = dbc.Container([
         
     ]),
     
-    dbc.Row(
-        [dbc.Col(
-            [
-                dbc.Row(
-                    dbc.Col(
-                        dbc.CardHeader('Attrition Overview', 
-                            style={
-                                'textAlign': 'center',
-                                'justify': "center",
-                                'font-size': '20px',
-                                'font-family': 'Proxima Nova' #Roboto, Open Sans, 
-                            }),
-                        width={"size": 5, "offset": 4},
-                    )
-                ),
-
-                dbc.Row([dbc.Col(card) for card in cards]),
-                # dbc.Row([
-                #     dbc.CardBody(
-                #         html.Iframe(
-                #             id='summary_plots_overall',
-                #             srcDoc=plot_summaries()[2],
-                #             style={'justify': "center",
-                #             'border-width': '0', 
-                #             'width': '200%', 
-                #             'height': '300px'}
-                #         ),
-                #     style={
-                #         'textAlign': 'center',
-                #         'justify': "center",
-                #         'font-size': '20px',
-                #         'font-family': 'Roboto'}
-                # )]),
-                        
-            ],
-            style=CONTENT_STYLE,
-            ),
-        ])
+    
 ])
 
 # Set up callbacks/backend
