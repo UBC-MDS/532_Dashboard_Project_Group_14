@@ -3,6 +3,8 @@
 
 # Key Factors for Employee Attrition Dashboard
 
+## Dashboard App Deployment - Prototype
+[Key Factors for Employee Attrition](https://dsci532-grou14-appv1-1.herokuapp.com/)
 
 ## Welcome!
 Welcome to our dashboard! 
@@ -34,5 +36,4 @@ App sketch
 
 <!-- #endregion -->
 
-## Dashboard App Deployment - Prototype
-[Key Factors for Employee Attrition](https://dsci532-grou14-appv1-1.herokuapp.com/)
+
