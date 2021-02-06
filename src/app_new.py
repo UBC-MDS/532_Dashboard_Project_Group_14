@@ -1,4 +1,4 @@
-from altair.vegalite.v4.schema.channels import Opacity
+# from altair.vegalite.v4.schema.channels import Opacity
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
@@ -6,28 +6,47 @@ from dash.dependencies import Input, Output
 import altair as alt
 import pandas as pd
 import dash_bootstrap_components as dbc
+import base64
 
 # Read Data - Don't Change the Path
 df = pd.read_csv(r"data/Processed/HR_employee_Attrition_editted.csv")
 # Convert variables to categoriccal and reordering by label.
-df['EnvironmentSatisfaction'] = df['EnvironmentSatisfaction'].astype('category').cat.rename_categories(["1 - Bad", "2 - Good", "3 - Better", "4 - Best"])
-df['WorkLifeBalance']=df['WorkLifeBalance'].astype('category').cat.rename_categories(["1 - Low", "2 - Medium", "3 - High", "4 - Very High"])
-df["Department"]=df["Department"].astype('category')
-df["BusinessTravel"]=df["BusinessTravel"].astype('category')
-df['BusinessTravel'] = df['BusinessTravel'].cat.rename_categories(["1 - No Travel", "3 - Travel Frequently", "2 - Travel Rarely"])
+df["EnvironmentSatisfaction"] = (
+    df["EnvironmentSatisfaction"]
+    .astype("category")
+    .cat.rename_categories(["1 - Bad", "2 - Good", "3 - Better", "4 - Best"])
+)
+df["WorkLifeBalance"] = (
+    df["WorkLifeBalance"]
+    .astype("category")
+    .cat.rename_categories(["1 - Low", "2 - Medium", "3 - High", "4 - Very High"])
+)
+df["Department"] = df["Department"].astype("category")
+df["BusinessTravel"] = df["BusinessTravel"].astype("category")
+df["BusinessTravel"] = df["BusinessTravel"].cat.rename_categories(
+    ["1 - No Travel", "3 - Travel Frequently", "2 - Travel Rarely"]
+)
 
-# Calculate summary metrics for cards
-attrition_rate = df["Attrition"].value_counts(normalize=True)[1]
-no_att_count = df["Attrition"].value_counts()[0]
-yes_att_count = df["Attrition"].value_counts()[1]
-total_count = df["Attrition"].count()
 
-# Attrition propertion by gender
-# df_f = df[df['Gender']=='Female']
-# female_attrition_rate = count(df_f['Attrition']=='Yes')/df_f.shape[0]
+def get_attrition(df):
+    """To get attrition rate for given any filtered dataset"""
+    attrition_rate = df["Attrition"].value_counts(normalize=True)[1]
+    return attrition_rate
+
+
+df_f = df[df["Gender"] == "Female"]
+df_m = df[df["Gender"] == "Male"]
+df_hr = df[df["Department"] == "Human Resources"]
+df_rd = df[df["Department"] == "Research & Development"]
+df_s = df[df["Department"] == "Sales"]
+
 
 # Setup app and layout/frontend
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(
+    __name__,
+    title="Employee Attrition Dashboard",
+    external_stylesheets=[dbc.themes.BOOTSTRAP],
+)
 server = app.server
 
 # Setup sidebar style
@@ -52,252 +71,320 @@ CONTENT_STYLE = {
     # "margin-left": "12rem",
     # "margin-right": "rem",
     # "padding": "2rem 1rem",
-    "background-color": "#F2F3F4",
+    "background-color": "#f0f0f1",
 }
 
 # set up summary plots
-def plot_summaries(df=df):
+# def plot_summaries(df=df):
 
-    chart_att_department = alt.Chart(
-        df, 
-        title='Attrition by Department').mark_bar(size=60, opacity= 0.8).encode(
-        x=alt.X('Department', title='', axis=alt.Axis(grid=False, labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
-        y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
-        color=alt.Color('Attrition', scale=alt.Scale(range=["#00BFC4", "#F8766D"])),
-        #tooltip='Attrition'
-        ).properties(height=200, width=250)
+#     chart_att_department = alt.Chart(
+#         df,
+#         title='Attrition by Department').mark_bar(size=60, opacity= 0.8).encode(
+#         x=alt.X('Department', title='', axis=alt.Axis(grid=False, labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
+#         y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
+#         color=alt.Color('Attrition', scale=alt.Scale(range=["#00BFC4", "#F8766D"])),
+#         #tooltip='Attrition'
+#         ).properties(height=200, width=250)
 
-    chart_att_gender = alt.Chart(
-        df, 
-        title='Attrition by Gender').mark_bar(size=70, opacity= 0.8).encode(
-        x=alt.X('Gender', title='', axis=alt.Axis(grid=False,labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
-        y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
-        color = alt.Color('Attrition', scale=alt.Scale(range=["#00BFC4", "#F8766D"])),
-        # tooltip='female_attrition_rate'
-        ).properties(height=200, width=250)
+#     chart_att_gender = alt.Chart(
+#         df,
+#         title='Attrition by Gender').mark_bar(size=70, opacity= 0.8).encode(
+#         x=alt.X('Gender', title='', axis=alt.Axis(grid=False,labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
+#         y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
+#         color = alt.Color('Attrition', scale=alt.Scale(range=["#00BFC4", "#F8766D"])),
+#         # tooltip='female_attrition_rate'
+#         ).properties(height=200, width=250)
 
-    chart = (chart_att_department | chart_att_gender) 
+#     chart = (chart_att_department | chart_att_gender)
 
-    return chart_att_department.to_html(), chart_att_gender.to_html() #chart.to_html()
+#     return chart_att_department.to_html(), chart_att_gender.to_html() #chart.to_html()
 
 # Define cards for the dashboard
 cards = [
     dbc.Card(
         [
-            html.H2(f"{attrition_rate*100:.2f}%", className="card-title"),
-            html.P("Attrition Rate By Department", className="card-text"),
-            html.Iframe(
-                            id='summary_plots',
-                            srcDoc=plot_summaries()[0],
-                            style={'justify': "center",
-                            'border-width': '0', 
-                            'width': '200%', 
-                            'height': '300px'}
-                        )
-         ],
-        body=True,
+            dbc.CardHeader("Overall"),
+            dbc.CardBody(
+                [html.H4(f"{get_attrition(df)*100:.2f}%", className="card-title"),],
+                style={"font-size": 15},
+            ),
+        ],
         color="light",
+        style={"font-size": 14},
     ),
-    # This can be replaced with other summary stacked-bar chart
     dbc.Card(
         [
-            html.H2(f"{attrition_rate*100:.2f}%", className="card-title"),
-            html.P("Attrition Rate By Gender", className="card-text"),
-            html.Iframe(
-                            id='summary_plots_gender',
-                            srcDoc=plot_summaries()[1],
-                            style={'justify': "center",
-                            'border-width': '0', 
-                            'width': '200%', 
-                            'height': '300px'}
-                        )
+            dbc.CardHeader("By Gender"),
+            dbc.CardBody(
+                [
+                    html.H4(f"{get_attrition(df_f)*100:.2f}%", className="card-title"),
+                    html.P("Female", className="card-text"),
+                    html.H4(f"{get_attrition(df_m)*100:.2f}%", className="card-title"),
+                    html.P("Male", className="card-text"),
+                ],
+                style={"font-size": 15},
+            ),
         ],
-        body=True,
         color="light",
+        style={"font-size": 14},
+    ),
+    # dbc.Card(
+    #     [
+    #         html.H2(f"{get_attrition(df_f)*100:.2f}%", className="card-title"),
+    #         html.P("Female", className="card-text"),
+    #         html.H2(f"{get_attrition(df_m)*100:.2f}%", className="card-title"),
+    #         html.P("Male", className="card-text"),
+    #      ],
+    #     body=True,
+    #     color="light",
+    # ),
+    dbc.Card(
+        [
+            dbc.CardHeader("By Department"),
+            dbc.CardBody(
+                [
+                    html.H4(f"{get_attrition(df_hr)*100:.2f}%", className="card-title"),
+                    html.P("Human Resources", className="card-text"),
+                    html.H4(f"{get_attrition(df_rd)*100:.2f}%", className="card-title"),
+                    html.P("Research & Development", className="card-text"),
+                    html.H4(f"{get_attrition(df_s)*100:.2f}%", className="card-title"),
+                    html.P("Sales", className="card-text"),
+                ],
+                style={"font-size": 15},
+            ),
+        ],
+        color="light",
+        style={"font-size": 14},
     ),
 ]
 
-
-
-app.layout = dbc.Container([
-     dbc.Row([
-        dbc.Col([
-            html.H1('Employee Attrition Dashboard', 
-            style={
-                    'color' : 'b', 
-                    'background-color' : '#f0f0f1', 
-                    'textAlign': 'center',
-                    'justify': "center",
-                    'font-size': '48px',
-                    'font-family': 'Roboto'
-                   }),
-            html.Br(),
-        ], style={'backgroundColor': '#f0f0f1',
-                    'border-radius': 3,
-                    'padding': 5,
-                    'margin-top': 20,
-                    'margin-bottom': 15,
-                    'margin-right': 15
-        })                  
-    ]),
-
-    dbc.Row(
-        [dbc.Col(
+app.layout = dbc.Container(
+    [
+        dbc.Row(
             [
-                dbc.Row(
-                    dbc.Col(
-                        dbc.CardHeader('Attrition Overview', 
+                dbc.Col(
+                    [
+                        html.H1(
+                            "Employee Attrition Dashboard",
                             style={
-                                'textAlign': 'center',
-                                'justify': "center",
-                                'font-size': '20px',
-                                'font-family': 'Proxima Nova' #Roboto, Open Sans, 
-                            }),
-                        width={"size": 5, "offset": 4},
-                    )
-                ),
-
-                dbc.Row([dbc.Col(card) for card in cards]),                        
-            ],
-            style=CONTENT_STYLE,
-            )
-        ]),
-
-    dbc.Row([
-        dbc.Col([
-            html.H2('Key Factors for Employee Attrition Dashboard', 
-            style={
-                    'color' : 'b', 
-                    'background-color' : '#f0f0f1', 
-                    'textAlign': 'center',
-                    'justify': "center",
-                    'font-size': '48px',
-                    'font-family': 'Roboto'
-                   }),
-            html.Br(),
-        ], style={'backgroundColor': '#f0f0f1',
-                    'border-radius': 3,
-                    'padding': 5,
-                    'margin-top': 20,
-                    'margin-bottom': 15,
-                    'margin-right': 15
-        })                  
-    ]),
-    
-    dbc.Row([
-        dbc.Col([  
-                # html.Br(),
-                # html.Br(),
-                html.H2("Dashboard Filters", className="display-10"),
-                html.Hr(),
-                html.Br(),
-                dcc.Markdown("""_Department_"""),
-                dcc.Dropdown(
-                    id="depart-widget",
-                    value=["Sales", "Human Resources", "Research & Development"],
-                    options=[
-                        {"label": col, "value": col}
-                        for col in list(set(df.Department.tolist()))
+                                "background-color": "#f0f0f1",
+                                "textAlign": "center",
+                                "margin-top": 20,
+                                "margin-bottom": 0,
+                                "font-size": "40px",
+                                "font-family": "Roboto",
+                            },
+                        ),
+                        html.Br(),
                     ],
-                    multi=True,
-                    placeholder="Select a department",
-                ),
-                html.Br(),
-                dcc.Markdown("""_Gender_"""),
-                dcc.Dropdown(
-                    id="gender-widget",
-                    value=[
-                        "Female",
-                        "Male",
-                    ],  # REQUIRED to show the plot on the first page load
-                    options=[
-                        {"label": "Female", "value": "Female"},
-                        {"label": "Male", "value": "Male"},
+                    style={
+                        "backgroundColor": "#f0f0f1",
+                        "padding": 5,
+                        "margin-top": 20,
+                        "margin-bottom": 15,
+                        "margin-right": 30,
+                    },
+                )
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        # html.Br(),
+                        # html.Br(),
+                        html.H2("Dashboard Filters", className="display-10"),
+                        html.Hr(),
+                        html.Br(),
+                        dcc.Markdown("""_Department_"""),
+                        dcc.Dropdown(
+                            id="depart-widget",
+                            value=[
+                                "Sales",
+                                "Human Resources",
+                                "Research & Development",
+                            ],
+                            options=[
+                                {"label": col, "value": col}
+                                for col in list(set(df.Department.tolist()))
+                            ],
+                            multi=True,
+                            placeholder="Select a department",
+                        ),
+                        html.Br(),
+                        dcc.Markdown("""_Gender_"""),
+                        dcc.Dropdown(
+                            id="gender-widget",
+                            value=[
+                                "Female",
+                                "Male",
+                            ],  # REQUIRED to show the plot on the first page load
+                            options=[
+                                {"label": "Female", "value": "Female"},
+                                {"label": "Male", "value": "Male"},
+                            ],
+                            multi=True,
+                            placeholder="Select gender",
+                        ),
+                        html.Br(),
+                        dcc.Markdown("""_Age_"""),
+                        dcc.RangeSlider(
+                            id="age_slider",
+                            min=df["Age"].min(),
+                            max=df["Age"].max(),
+                            value=[18, 60],
+                            step=1,
+                            marks={30: "30", 40: "40", 50: "50"},
+                            tooltip={"always_visible": False, "placement": "bottom"},
+                        ),
                     ],
-                    multi=True,
-                    placeholder="Select gender",
+                    style=SIDEBAR_STYLE,
+                    width="auto",
                 ),
-                html.Br(),
-                dcc.Markdown("""_Age_"""),
-                dcc.RangeSlider(
-                    id="age_slider",
-                    min=df["Age"].min(),
-                    max=df["Age"].max(),
-                    value=[18, 60],
-                    step=1,
-                    marks={30: "30", 40: "40", 50: "50"},
-                    tooltip={"always_visible": False, "placement": "bottom"},
+                dbc.Col(
+                    [
+                        dbc.Col(
+                            [
+                                dbc.Row(
+                                    dbc.Col(
+                                        dbc.CardHeader(
+                                            "Attrition Rate Overview",
+                                            style={
+                                                "textAlign": "center",
+                                                "justify": "center",
+                                                "font-size": "18px",
+                                                "border-radius": 3,
+                                                "backgroundColor": "#f0f0f1",
+                                            },
+                                        ),
+                                    )
+                                ),
+                                dbc.Row(
+                                    [dbc.Col(card) for card in cards], no_gutters=True,
+                                ),
+                                dbc.Row(
+                                    dbc.Col(
+                                        dbc.CardHeader(
+                                            "Key Factors for Employee Attrition",
+                                            style={
+                                                "textAlign": "center",
+                                                "justify": "center",
+                                                "font-size": "18px",
+                                                "border-radius": 3,
+                                                "backgroundColor": "#f0f0f1",
+                                            },
+                                        ),
+                                    )
+                                ),
+                            ],
+                        ),
+                        html.Iframe(
+                            id="scatter",
+                            style={
+                                "border-width": "0",
+                                "width": "200%",
+                                "height": "550px",
+                                "horizontalAlign": "center",
+                            },
+                        ),
+                    ]
                 ),
-            ],
-            style=SIDEBAR_STYLE,
-            width="auto"),
-        
-        dbc.Col(
-                [
-                    html.Iframe(
-                        id="scatter",
-                        style={
-                            "border-width": "0",
-                            "width": "200%",
-                            "height": "550px",
-                            "horizontalAlign": "center",
-                        },
-                    ),
-                ]
-            )
-        
-    ]),
-    
-    
-])
+            ]
+        ),
+    ]
+)
+
 
 # Set up callbacks/backend
 @app.callback(
-    Output('scatter', 'srcDoc'),
-    Input('depart-widget', 'value'),
-    Input('gender-widget', 'value'),
-    Input('age_slider', 'value'))
-
-def plot_altair(depart,gender, age=18):
+    Output("scatter", "srcDoc"),
+    Input("depart-widget", "value"),
+    Input("gender-widget", "value"),
+    Input("age_slider", "value"),
+)
+def plot_altair(depart, gender, age=18):
+    """Plot four main charts - key factors for employee attrition"""
     # filter data based on criteria
-    data = df[(df['Department'].isin(depart)) & (df['Gender'].isin(gender))&(df['Age']>=age[0])&(df['Age']<=age[1])]
+    data = df[
+        (df["Department"].isin(depart))
+        & (df["Gender"].isin(gender))
+        & (df["Age"] >= age[0])
+        & (df["Age"] <= age[1])
+    ]
 
     col_range = ["#00BFC4", "#F8766D"]
     # distribution on monthly income
 
-    chart_income = alt.Chart(data, title='Monthly Income Distribution').mark_boxplot(size = 50).encode(
-        x=alt.X('MonthlyIncome:Q', scale=alt.Scale(zero=False), axis=alt.Axis(grid=False)),
-        y=alt.Y('Attrition',  axis=alt.Axis(grid=False)),
-        color=alt.Color('Attrition', scale=alt.Scale(range=col_range)) 
-        #scale=alt.Scale(domain=domain, range=range_) scheme='tableau20'
-        ).properties(height=200, width=250)
-    
-    chart_worklife = alt.Chart(
-        data, 
-        title='Work Life Balance').mark_bar(opacity= 0.8).encode(
-        y=alt.Y('WorkLifeBalance:O', title='', axis=alt.Axis(grid=False)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
-        x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
-        color = 'Attrition'
-    ).properties(height=200, width=250)
-    
-    chart_travel = alt.Chart(
-        data,
-        title='Business Travel Frequency').mark_bar(opacity= 0.8).encode(
-        y=alt.Y("BusinessTravel", title="", axis=alt.Axis(grid=False)),
-        x=alt.X('count()', stack="normalize", axis=alt.Axis(format='%', grid=False), title='Proportion'),
-        color = "Attrition").properties(height=200, width=250)
-    
-    chart_environment = alt.Chart(
-        data, 
-        title='Environment Satisfaction').mark_bar(opacity= 0.8).encode(
-        y=alt.Y('EnvironmentSatisfaction', title='', axis=alt.Axis(grid=False)),
-        x=alt.X('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
-        color='Attrition').properties(height=200, width=250)
-    
-    chart = ((chart_income&chart_travel) | (chart_worklife&chart_environment))
+    chart_income = (
+        alt.Chart(data, title="Monthly Income Distribution")
+        .mark_boxplot(size=50, color="Attrition")
+        .encode(
+            x=alt.X(
+                "MonthlyIncome:Q",
+                title="Month Income (in thousands)",
+                scale=alt.Scale(zero=False),
+                axis=alt.Axis(grid=False, format="$~s"),
+            ),
+            y=alt.Y("Attrition", axis=alt.Axis(grid=False)),
+            color=alt.Color("Attrition", scale=alt.Scale(range=col_range))
+            # scale=alt.Scale(domain=domain, range=range_) scheme='tableau20'
+        )
+        .properties(height=200, width=250)
+    )
+
+    chart_worklife = (
+        alt.Chart(data, title="Work Life Balance")
+        .mark_bar(opacity=0.8)
+        .encode(
+            y=alt.Y(
+                "WorkLifeBalance:O", title="", axis=alt.Axis(grid=False)
+            ),  # scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
+            x=alt.X(
+                "count()",
+                stack="normalize",
+                axis=alt.Axis(format="%", grid=False),
+                title="Proportion",
+            ),
+            color="Attrition",
+        )
+        .properties(height=200, width=250)
+    )
+
+    chart_travel = (
+        alt.Chart(data, title="Business Travel Frequency")
+        .mark_bar(opacity=0.8)
+        .encode(
+            y=alt.Y("BusinessTravel", title="", axis=alt.Axis(grid=False)),
+            x=alt.X(
+                "count()",
+                stack="normalize",
+                axis=alt.Axis(format="%", grid=False),
+                title="Proportion",
+            ),
+            color="Attrition",
+        )
+        .properties(height=200, width=250)
+    )
+
+    chart_environment = (
+        alt.Chart(data, title="Environment Satisfaction")
+        .mark_bar(opacity=0.8)
+        .encode(
+            y=alt.Y("EnvironmentSatisfaction", title="", axis=alt.Axis(grid=False)),
+            x=alt.X(
+                "count()",
+                stack="normalize",
+                axis=alt.Axis(format="%", grid=False),
+                title="Proportion",
+            ),
+            color="Attrition",
+        )
+        .properties(height=200, width=250)
+    )
+
+    chart = (chart_income & chart_travel) | (chart_worklife & chart_environment)
     return chart.to_html()
 
 
-
-if __name__ == '__main__':
-    app.run_server(debug=True)        #debug=True
+if __name__ == "__main__":
+    app.run_server(debug=True, host="127.0.0.1")  # debug=True
