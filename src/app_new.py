@@ -52,16 +52,17 @@ server = app.server
 # Setup sidebar style
 SIDEBAR_STYLE = {
     # "position": "fixed",
-    # "top": 200,
+    "top": 360,
     # "left": 50,
     # "bottom": 10,
+    "justify": "center",
     "width": "20rem",
     "padding": "3rem 1rem",
-    "background-color": "#D4E6F1",
+    "background-color": "#D4E6F1", 
 }
 # Setup the main content style
 CONTENT_STYLE = {
-    # "position": "fixed",
+    #"position": "center",   # "position": "fixed",
     # "top": 56.5,
     # "left": 360,
     # "bottom": 10,
@@ -169,6 +170,7 @@ app.layout = dbc.Container(
                             style={
                                 "background-color": "#f0f0f1",
                                 "textAlign": "center",
+                                "justify": "center",
                                 "margin-top": 20,
                                 "margin-bottom": 0,
                                 "font-size": "40px",
@@ -252,7 +254,7 @@ app.layout = dbc.Container(
                                             style={
                                                 "textAlign": "center",
                                                 "justify": "center",
-                                                "font-size": "18px",
+                                                "font-size": "20px",
                                                 "border-radius": 3,
                                                 "backgroundColor": "#f0f0f1",
                                             },
@@ -269,7 +271,7 @@ app.layout = dbc.Container(
                                             style={
                                                 "textAlign": "center",
                                                 "justify": "center",
-                                                "font-size": "18px",
+                                                "font-size": "20px",
                                                 "border-radius": 3,
                                                 "backgroundColor": "#f0f0f1",
                                             },
@@ -278,6 +280,7 @@ app.layout = dbc.Container(
                                 ),
                             ],
                         ),
+                      
                         html.Iframe(
                             id="scatter",
                             style={
@@ -285,7 +288,8 @@ app.layout = dbc.Container(
                                 "width": "200%",
                                 "height": "550px",
                                 "horizontalAlign": "center",
-                            },
+                                },
+                        
                         ),
                     ]
                 ),
@@ -387,4 +391,4 @@ def plot_altair(depart, gender, age=18):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host="127.0.0.1")  # debug=True
+    app.run_server()  # debug=True, host="127.0.0.1"
