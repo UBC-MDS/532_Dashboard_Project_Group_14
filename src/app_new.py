@@ -8,7 +8,7 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 import base64
 
-# deploymment test
+# deploymment test v2
 # Read Data - Don't Change the Path
 df = pd.read_csv(r"data/Processed/HR_employee_Attrition_editted.csv")
 # Convert variables to categoriccal and reordering by label.
