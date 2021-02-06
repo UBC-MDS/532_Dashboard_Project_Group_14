@@ -6,9 +6,8 @@ from dash.dependencies import Input, Output
 import altair as alt
 import pandas as pd
 import dash_bootstrap_components as dbc
-import base64
 
-# deploymment test v2
+
 # Read Data - Don't Change the Path
 df = pd.read_csv(r"data/Processed/HR_employee_Attrition_editted.csv")
 # Convert variables to categoriccal and reordering by label.
@@ -53,7 +52,7 @@ server = app.server
 # Setup sidebar style
 SIDEBAR_STYLE = {
     # "position": "fixed",
-    "top": 360,
+    #"top": 360,
     # "left": 50,
     # "bottom": 10,
     "justify": "center",
@@ -175,7 +174,7 @@ app.layout = dbc.Container(
                                 "margin-top": 20,
                                 "margin-bottom": 0,
                                 "font-size": "40px",
-                                "font-family": "Roboto",
+                                #"font-family": "Lato",
                             },
                         ),
                         html.Br(),
@@ -184,7 +183,7 @@ app.layout = dbc.Container(
                         "backgroundColor": "#f0f0f1",
                         "padding": 5,
                         "margin-top": 20,
-                        "margin-bottom": 15,
+                        "margin-bottom": 5,
                         "margin-right": 30,
                     },
                 )
@@ -194,9 +193,22 @@ app.layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        # html.Br(),
-                        # html.Br(),
-                        html.H2("Dashboard Filters", className="display-10"),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.Br(),
+                        html.H2("Dashboard Filters for Key Factors", className="display-10"),
                         html.Hr(),
                         html.Br(),
                         dcc.Markdown("""_Department_"""),
@@ -281,7 +293,7 @@ app.layout = dbc.Container(
                                 ),
                             ],
                         ),
-                      
+                        html.Br(),
                         html.Iframe(
                             id="scatter",
                             style={
@@ -308,7 +320,26 @@ app.layout = dbc.Container(
     Input("age_slider", "value"),
 )
 def plot_altair(depart, gender, age=18):
-    """Plot four main charts - key factors for employee attrition"""
+    """
+    Taking in values from dropdowns and sliders to 
+    to plot four main charts for "key factors for employee attrition" section
+
+    Parameters
+    ----------
+    deparment : str
+        the selected department from drop down, can be multiple values
+    gender : str 
+        the selected department from drop down, can be multiple values
+    age : list
+        the range of age to be filtered with min and max value
+
+    Returns
+    -------
+    html
+        The html charts to show in the dashboard 
+    """
+
+    #"""Plot four main charts - key factors for employee attrition"""
     # filter data based on criteria
     data = df[
         (df["Department"].isin(depart))
@@ -330,7 +361,7 @@ def plot_altair(depart, gender, age=18):
                 scale=alt.Scale(zero=False),
                 axis=alt.Axis(grid=False, format="$~s"),
             ),
-            y=alt.Y("Attrition", axis=alt.Axis(grid=False)),
+            y=alt.Y("Attrition", axis=alt.Axis(grid=False, title="")),
             color=alt.Color("Attrition", scale=alt.Scale(range=col_range))
             # scale=alt.Scale(domain=domain, range=range_) scheme='tableau20'
         )
@@ -392,4 +423,4 @@ def plot_altair(depart, gender, age=18):
 
 
 if __name__ == "__main__":
-    app.run_server()  # debug=True, host="127.0.0.1"
+    app.run_server(debug=True, host="127.0.0.1")  # debug=True, host="127.0.0.1"
