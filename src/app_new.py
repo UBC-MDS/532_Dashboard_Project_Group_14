@@ -1,4 +1,4 @@
-from altair.vegalite.v4.schema.channels import Opacity
+# from altair.vegalite.v4.schema.channels import Opacity
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output
 import altair as alt
 import pandas as pd
 import dash_bootstrap_components as dbc
+import base64
 
 # Read Data - Don't Change the Path
 df = pd.read_csv(r"data/Processed/HR_employee_Attrition_editted.csv")
@@ -16,18 +17,23 @@ df["Department"]=df["Department"].astype('category')
 df["BusinessTravel"]=df["BusinessTravel"].astype('category')
 df['BusinessTravel'] = df['BusinessTravel'].cat.rename_categories(["1 - No Travel", "3 - Travel Frequently", "2 - Travel Rarely"])
 
-# Calculate summary metrics for cards
-attrition_rate = df["Attrition"].value_counts(normalize=True)[1]
-no_att_count = df["Attrition"].value_counts()[0]
-yes_att_count = df["Attrition"].value_counts()[1]
-total_count = df["Attrition"].count()
+def get_attrition(df):
+    '''To get attrition rate for given any filtered dataset'''
+    attrition_rate = df["Attrition"].value_counts(normalize=True)[1]
+    return attrition_rate
+#     no_att_count = df["Attrition"].value_counts()[0]
+#     yes_att_count = df["Attrition"].value_counts()[1]
+#     total_count = df["Attrition"].count()
 
-# Attrition propertion by gender
-# df_f = df[df['Gender']=='Female']
-# female_attrition_rate = count(df_f['Attrition']=='Yes')/df_f.shape[0]
+df_f = df[df['Gender']=='Female']
+df_m = df[df['Gender']=='Male']
+df_hr = df[df['Department']=='Human Resources']
+df_rd = df[df['Department']=='Research & Development']
+df_s = df[df['Department']=='Sales']
+
 
 # Setup app and layout/frontend
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, title='Employee Attrition Dashboard', external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 # Setup sidebar style
@@ -52,12 +58,12 @@ CONTENT_STYLE = {
     # "margin-left": "12rem",
     # "margin-right": "rem",
     # "padding": "2rem 1rem",
-    "background-color": "#F2F3F4",
+    "background-color": "#f0f0f1",
 }
 
 # set up summary plots
 def plot_summaries(df=df):
-
+    
     chart_att_department = alt.Chart(
         df, 
         title='Attrition by Department').mark_bar(size=60, opacity= 0.8).encode(
@@ -84,105 +90,99 @@ def plot_summaries(df=df):
 cards = [
     dbc.Card(
         [
-            html.H2(f"{attrition_rate*100:.2f}%", className="card-title"),
-            html.P("Attrition Rate By Department", className="card-text"),
-            html.Iframe(
-                            id='summary_plots',
-                            srcDoc=plot_summaries()[0],
-                            style={'justify': "center",
-                            'border-width': '0', 
-                            'width': '200%', 
-                            'height': '300px'}
-                        )
+            dbc.CardHeader("Overall"),
+            dbc.CardBody(
+                [
+                    html.H4(f"{get_attrition(df)*100:.2f}%", className="card-title"),
+                ],style={"font-size": 15}
+            ),
          ],
-        body=True,
         color="light",
+        style={"font-size": 14}
+    
     ),
-    # This can be replaced with other summary stacked-bar chart
     dbc.Card(
         [
-            html.H2(f"{attrition_rate*100:.2f}%", className="card-title"),
-            html.P("Attrition Rate By Gender", className="card-text"),
-            html.Iframe(
-                            id='summary_plots_gender',
-                            srcDoc=plot_summaries()[1],
-                            style={'justify': "center",
-                            'border-width': '0', 
-                            'width': '200%', 
-                            'height': '300px'}
-                        )
-        ],
-        body=True,
+            dbc.CardHeader("By Gender"),
+            dbc.CardBody(
+                [
+                    html.H4(f"{get_attrition(df_f)*100:.2f}%", className="card-title"),
+                    html.P("Female", className="card-text"),
+                    html.H4(f"{get_attrition(df_m)*100:.2f}%", className="card-title"),
+                    html.P("Male", className="card-text"),
+                ],style={"font-size": 15}
+            ),
+         ],
         color="light",
+        style={"font-size": 14}
+    
     ),
+    # dbc.Card(
+    #     [
+    #         html.H2(f"{get_attrition(df_f)*100:.2f}%", className="card-title"),
+    #         html.P("Female", className="card-text"),
+    #         html.H2(f"{get_attrition(df_m)*100:.2f}%", className="card-title"),
+    #         html.P("Male", className="card-text"),
+    #      ],
+    #     body=True,
+    #     color="light",
+    
+    # ),
+    dbc.Card(
+        [
+            dbc.CardHeader("By Department"),
+            dbc.CardBody(
+                [
+                    html.H4(f"{get_attrition(df_hr)*100:.2f}%", className="card-title"),
+                    html.P("Human Resources", className="card-text"),
+                    html.H4(f"{get_attrition(df_rd)*100:.2f}%", className="card-title"),
+                    html.P("Research & Development", className="card-text"),
+                    html.H4(f"{get_attrition(df_s)*100:.2f}%", className="card-title"),
+                    html.P("Sales", className="card-text"),
+                ],style={"font-size": 15}
+            ),
+         ],
+        color="light",
+        style={"font-size": 14}
+    
+    ),
+
 ]
 
-
-
 app.layout = dbc.Container([
+
      dbc.Row([
         dbc.Col([
             html.H1('Employee Attrition Dashboard', 
             style={
-                    'color' : 'b', 
                     'background-color' : '#f0f0f1', 
                     'textAlign': 'center',
-                    'justify': "center",
-                    'font-size': '48px',
-                    'font-family': 'Roboto'
+                    'margin-top': 20,
+                    'margin-bottom': 0,
+                    'font-size': '40px',
+                    'font-family': 'Roboto',
                    }),
             html.Br(),
         ], style={'backgroundColor': '#f0f0f1',
-                    'border-radius': 3,
                     'padding': 5,
                     'margin-top': 20,
                     'margin-bottom': 15,
-                    'margin-right': 15
+                    'margin-right': 30
+
         })                  
     ]),
 
-    dbc.Row(
-        [dbc.Col(
-            [
-                dbc.Row(
-                    dbc.Col(
-                        dbc.CardHeader('Attrition Overview', 
-                            style={
-                                'textAlign': 'center',
-                                'justify': "center",
-                                'font-size': '20px',
-                                'font-family': 'Proxima Nova' #Roboto, Open Sans, 
-                            }),
-                        width={"size": 5, "offset": 4},
-                    )
-                ),
-
-                dbc.Row([dbc.Col(card) for card in cards]),                        
-            ],
-            style=CONTENT_STYLE,
-            )
-        ]),
-
-    dbc.Row([
-        dbc.Col([
-            html.H2('Key Factors for Employee Attrition Dashboard', 
-            style={
-                    'color' : 'b', 
-                    'background-color' : '#f0f0f1', 
-                    'textAlign': 'center',
-                    'justify': "center",
-                    'font-size': '48px',
-                    'font-family': 'Roboto'
-                   }),
-            html.Br(),
-        ], style={'backgroundColor': '#f0f0f1',
-                    'border-radius': 3,
-                    'padding': 5,
-                    'margin-top': 20,
-                    'margin-bottom': 15,
-                    'margin-right': 15
-        })                  
-    ]),
+    # dbc.Row([
+    #     dbc.Col([
+    #         html.Br(),
+    #     ], style={'backgroundColor': '#f0f0f1',
+    #                 'border-radius': 3,
+    #                 'padding': 5,
+    #                 'margin-top': 20,
+    #                 'margin-bottom': 15,
+    #                 'margin-right': 15
+    #     })                  
+    # ]),
     
     dbc.Row([
         dbc.Col([  
@@ -234,6 +234,42 @@ app.layout = dbc.Container([
         
         dbc.Col(
                 [
+                    
+                dbc.Col(
+                    [
+                        dbc.Row(
+                            dbc.Col(
+                                dbc.CardHeader('Attrition Rate Overview', 
+                                    style={
+                                        'textAlign': 'center',
+                                        'justify': "center",
+                                        'font-size': '18px',
+                                        'border-radius': 3,
+                                        'backgroundColor': '#f0f0f1'
+                                    }),
+                            )
+                        ),
+
+                        dbc.Row(
+                                [dbc.Col(card) for card in cards],
+                            
+                            no_gutters=True,
+                            ),
+                        dbc.Row(
+                            dbc.Col(
+                                dbc.CardHeader('Key Factors for Employee Attrition', 
+                                    style={
+                                        'textAlign': 'center',
+                                        'justify': "center",
+                                        'font-size': '18px',
+                                        'border-radius': 3,
+                                        'backgroundColor': '#f0f0f1'
+                                    }),
+                            )
+                        ),             
+                    ], 
+                    ),
+                    
                     html.Iframe(
                         id="scatter",
                         style={
@@ -248,8 +284,9 @@ app.layout = dbc.Container([
         
     ]),
     
-    
+  
 ])
+
 
 # Set up callbacks/backend
 @app.callback(
@@ -300,4 +337,4 @@ def plot_altair(depart,gender, age=18):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)        #debug=True
+    app.run_server(debug=True, host="127.0.0.1")        #debug=True
