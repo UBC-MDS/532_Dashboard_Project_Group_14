@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output
 import altair as alt
 import pandas as pd
 import dash_bootstrap_components as dbc
+import datetime
 
 
 # Read Data - Don't Change the Path
@@ -52,17 +53,17 @@ server = app.server
 # Setup sidebar style
 SIDEBAR_STYLE = {
     # "position": "fixed",
-    #"top": 360,
+    # "top": 360,
     # "left": 50,
     # "bottom": 10,
     "justify": "center",
     "width": "20rem",
     "padding": "3rem 1rem",
-    "background-color": "#D4E6F1", 
+    "background-color": "#D4E6F1",
 }
 # Setup the main content style
 CONTENT_STYLE = {
-    #"position": "center",   # "position": "fixed",
+    # "position": "center",   # "position": "fixed",
     # "top": 56.5,
     # "left": 360,
     # "bottom": 10,
@@ -74,31 +75,6 @@ CONTENT_STYLE = {
     # "padding": "2rem 1rem",
     "background-color": "#f0f0f1",
 }
-
-# set up summary plots
-# def plot_summaries(df=df):
-
-#     chart_att_department = alt.Chart(
-#         df,
-#         title='Attrition by Department').mark_bar(size=60, opacity= 0.8).encode(
-#         x=alt.X('Department', title='', axis=alt.Axis(grid=False, labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
-#         y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
-#         color=alt.Color('Attrition', scale=alt.Scale(range=["#00BFC4", "#F8766D"])),
-#         #tooltip='Attrition'
-#         ).properties(height=200, width=250)
-
-#     chart_att_gender = alt.Chart(
-#         df,
-#         title='Attrition by Gender').mark_bar(size=70, opacity= 0.8).encode(
-#         x=alt.X('Gender', title='', axis=alt.Axis(grid=False,labelAngle=10)), #scale=alt.Scale(domain=["Low", "Medium", "High", "Very High"])
-#         y=alt.Y('count()', stack = 'normalize', axis=alt.Axis(format='%', grid=False), title = 'Proportion'),
-#         color = alt.Color('Attrition', scale=alt.Scale(range=["#00BFC4", "#F8766D"])),
-#         # tooltip='female_attrition_rate'
-#         ).properties(height=200, width=250)
-
-#     chart = (chart_att_department | chart_att_gender)
-
-#     return chart_att_department.to_html(), chart_att_gender.to_html() #chart.to_html()
 
 # Define cards for the dashboard
 cards = [
@@ -172,12 +148,29 @@ app.layout = dbc.Container(
                                 "textAlign": "center",
                                 "justify": "center",
                                 "margin-top": 20,
-                                "margin-bottom": 0,
+                                "margin-bottom": 10,
                                 "font-size": "40px",
-                                #"font-family": "Lato",
+                                # "font-family": "Lato",
                             },
                         ),
-                        html.Br(),
+                        html.Hr(),
+                        html.P(
+                            "Attrition Rate Overview",
+                            style={
+                                "textAlign": "center",
+                                "margin-left": 10,
+                                "font-size": "20px",
+                            },
+                        ),
+                        dbc.Row(
+                            [dbc.Col(card) for card in cards],  # no_gutters=True,
+                            style={
+                                # "backgroundColor": "#f0f0f1",
+                                "margin-left": 5,
+                                "margin-bottom": 0,
+                                "margin-right": 5,
+                            },
+                        ),
                     ],
                     style={
                         "backgroundColor": "#f0f0f1",
@@ -194,21 +187,9 @@ app.layout = dbc.Container(
                 dbc.Col(
                     [
                         html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.Br(),
-                        html.H2("Dashboard Filters for Key Factors", className="display-10"),
+                        html.H2(
+                            "Dashboard Filters for Key Factors", className="display-10"
+                        ),
                         html.Hr(),
                         html.Br(),
                         dcc.Markdown("""_Department_"""),
@@ -263,23 +244,6 @@ app.layout = dbc.Container(
                                 dbc.Row(
                                     dbc.Col(
                                         dbc.CardHeader(
-                                            "Attrition Rate Overview",
-                                            style={
-                                                "textAlign": "center",
-                                                "justify": "center",
-                                                "font-size": "20px",
-                                                "border-radius": 3,
-                                                "backgroundColor": "#f0f0f1",
-                                            },
-                                        ),
-                                    )
-                                ),
-                                dbc.Row(
-                                    [dbc.Col(card) for card in cards], no_gutters=True,
-                                ),
-                                dbc.Row(
-                                    dbc.Col(
-                                        dbc.CardHeader(
                                             "Key Factors for Employee Attrition",
                                             style={
                                                 "textAlign": "center",
@@ -301,11 +265,34 @@ app.layout = dbc.Container(
                                 "width": "200%",
                                 "height": "550px",
                                 "horizontalAlign": "center",
-                                },
-                        
+                            },
                         ),
                     ]
                 ),
+            ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Footer(
+                            [
+                                dcc.Markdown(
+                                    f"*This Employee Attrition Dashboard was designed by the UBC MDS 2020/2021 Cohort(Group 14). Our team includes Anita Li, Cheuk Ho, Hazel Jiang, and Ivy Zhang. You can find the source data in our [project GitHub](https://github.com/UBC-MDS/532_Dashboard_Project_Group_14/blob/main/data/Processed/HR_employee_Attrition_editted.csv) derived from a [Kaggle dataset](https://www.kaggle.com/pavansubhasht/ibm-hr-analytics-attrition-dataset) with Open Database License with permission. Last time update on {{{datetime.datetime.now().date()}}}.*"
+                                ),
+                            ]
+                        ),
+                        html.Br(),
+                    ],
+                    style={
+                        "textAlign": "center",
+                        "justify": "center",
+                        "margin-top": 0,
+                        "margin-bottom": 0,
+                        "font-size": "11px",
+                        # "font-family": "Lato",
+                    },
+                )
             ]
         ),
     ]
@@ -339,7 +326,7 @@ def plot_altair(depart, gender, age=18):
         The html charts to show in the dashboard 
     """
 
-    #"""Plot four main charts - key factors for employee attrition"""
+    # """Plot four main charts - key factors for employee attrition"""
     # filter data based on criteria
     data = df[
         (df["Department"].isin(depart))
