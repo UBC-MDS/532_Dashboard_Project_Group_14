@@ -6,7 +6,7 @@ Cheuk Ho, Hazel Jiang, Anita Li, Ivy Zhang
 In this milestone, we further improved and implemented our dashboard with Python 
 by incorporating the improvement idea we had from previous milestones, feedbacks from TA and peer review. 
 We decided to go with Python due to the following reasons: 
-1) There is issue with plot title for subplot in R which required us to restructure our key factor plots, the most critical part of the dashboard.
+1) There are issues with plot title for subplot in R which required us to restructure our key factor plots, the most critical part of the dashboard.
 2) There are less documentation online for R regarding dash_core_components.
 3) The built-in interactive of ggplotly function can be distracting and less user friendly for new users. We want to keep our key plots clear and concise.
 
@@ -20,10 +20,9 @@ when they want to shift from the total level to the interested segment.
 Base of feedback from peer, we improved the storyline of our dashboard by adding overall and key segment attrition rate cards 
 on the top our dashboard. We decided to only use cards because cards deliver 
 information in a more straightforward and concise manner in our case. It allows the users to see the difference 
-between the key segments, the department and gender, more easily. Our group found this suggestion very valuable. While we have been keep the dashboard clear and concise,
-the suggestion reminds us that it's cruial to first give an overall picture on the overall and key segment attrition ratea before drilling down into the factors.
+between the key segments, the department and gender, more easily. Our group found this suggestion very valuable. While we have been keep the dashboard clear and concise, the suggestion reminds us that it's cruial to first give an overall picture on the overall and key segment attrition ratea before drilling down into the factors.
 
-Finallym, we also made several cometic edits for better visualization for our app. 
+Finally, we also made several cometic edits for better visualization for our app. 
 We adjusted the layout & margin between components of the dashboard and update sidebar format. 
 We also changed to more suitable and comfortable colour tone of the plots (i.e., blue and red for yes and no).
 The $ unit is added back to the \`Monthly Income\` plot.  
