@@ -3,15 +3,15 @@
 
 # Key Factors for Employee Attrition Dashboard
 
-## Dashboard App Deployment - Prototype
-[Key Factors for Employee Attrition](https://dsci532-grou14-appv1-1.herokuapp.com/)
+## Dashboard App Deployment
+[Key Factors for Employee Attrition](https://employee-attrition-dashboard.herokuapp.com/)
 
 ## Welcome!
 Welcome to our dashboard! 
 
 Thank you for visiting the Attrtion app project repository.
 
-This document(the README file) is going to offer you some information about the project. We are very excited to show you what we have here!
+This document (the README file) is going to offer you some information about the project. We are very excited to show you what we have here!
 
 ## What are we doing?
 
