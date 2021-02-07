@@ -17,14 +17,14 @@ filter, the same result is reached by using multi selection for the drop-downs.
 Users can now remove the default value in the drop-downs and pick the interested segment 
 when they want to shift from the total level to the interested segment. 
 
-Base of feedback from peer, we improved the storyline of our dashboard by adding overall and key segment attrition rate cards 
-on the top our dashboard. We decided to only use cards because cards deliver 
-information in a more straightforward and concise manner in our case. It allows the users to see the difference 
-between the key segments, the department and gender, more easily. Our group found this suggestion very valuable. While we have been keep the dashboard clear and concise, the suggestion reminds us that it's crucial to first give an overall picture on the overall and key segment attrition rate before drilling down into the factors.
+Base on feedback from peer, we improved the storyline of our dashboard by adding overall and key segment attrition rate cards 
+on the top of our dashboard. We decided to only use cards because cards deliver 
+information in a more straightforward and concise manner. It allows the users to see the difference 
+between the key segments, the department and gender more easily. Our group found this suggestion very valuable. While we have been keeping the dashboard clear and concise, the suggestion reminds us that it's crucial to first give an overall picture on the overall and key segment attrition rate before drilling down into the factors.
 
-Finally, we also made several cometic edits for better visualization for our app. 
+Finally, we also made several cosmetic edits for better visualization for our app. 
 We adjusted the layout & margin between components of the dashboard and update sidebar format. 
-We also changed to more suitable and comfortable colour tone of the plots (i.e., blue and red for yes and no).
+We also use more suitable and comfortable colour tone for the plots (i.e., blue and red for yes and no).
 The $ unit is added back to the \`Monthly Income\` plot.  
 
 So far, we believe our app is easy to use and very informative as well. Our app fully served the business objective in providing users a
