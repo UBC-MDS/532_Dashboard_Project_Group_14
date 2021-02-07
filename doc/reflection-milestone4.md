@@ -6,9 +6,9 @@ Cheuk Ho, Hazel Jiang, Anita Li, Ivy Zhang
 In this milestone, we further improved and implemented our dashboard with Python 
 by incorporating the improvement idea we had from previous milestones, feedbacks from TA and peer review. 
 We decided to go with Python due to the following reasons: 
-1) There is issue with plot title for subplot in R which required us to restructure our key charts.
+1) There is issue with plot title for subplot in R which required us to restructure our key factor plots, the most critical part of the dashboard.
 2) There are less documentation online for R regarding dash_core_components.
-3) The built-in interactive of ggplotly function can be distracting and less userfully particularly for new users. We want to keep our key plot clear and concise.
+3) The built-in interactive of ggplotly function can be distracting and less user friendly for new users. We want to keep our key plots clear and concise.
 
 We successfully implemented the feature of showing the attrition proportion at a total level when
 users first open our dashboard. It's a reoccurring feedback from TA and peer and we have been wanting to implemented this
