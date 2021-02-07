@@ -410,4 +410,4 @@ def plot_altair(depart, gender, age=18):
 
 
 if __name__ == "__main__":
-    app.run_server()  # debug=True, host="127.0.0.1" for deployment v2
+    app.run_server()  # debug=True, host="127.0.0.1" for deployment v3
